@@ -1,0 +1,12 @@
+papers/uc2-papers/*
+papers/ideas-paper-Submitted/*
+papers/suplemental-material/*
+.DS_Store
+subgrid_paper/.DS_Store
+subgrid_paper/*.aux
+subgrid_paper/*.bbl
+subgrid_paper/*.out
+subgrid_paper/*.gz
+subgrid_paper/*.spl
+subgrid_paper/*.blg
+subgrid_paper/*.log
