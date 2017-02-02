@@ -84,11 +84,9 @@ The integrated suface/subsurface modeling has received considerable attention fr
 The rest of the paper is organized as follows. Section~\ref{subgridmodel} introduces the derivation of the governing equations of the subgrid model. A short description, for a quick reference, of the Advanced Terrestrial Simulator (ATS) and the Arcos multiphysics management framework, within which we implemented our subgrid model, is presented in Section~\ref{ATS}. In Section~\ref{numerical-tests} we compare the numerical results of our subgrid model with no subgrid model and fine-scale results to illustrate the accuracy of our subgrid model for capturing fine-scale microtopographic features. Finally, in Section~\ref{conclusion}, we offer closing remarks and future research inline with thaw-induced subsidence.
 
 %discuss low-centered and high-centered polygons 
-%Section~\ref{motivation} presents some fine-scale simulation results and analysis that motivated the approach.  In Section~\ref{mixed-dim-model} we introduce our mixed-dimensional modeling approach, loosely coupled scheme and the ATS refactoring strategy.
+
 
 %The surface flow is mainly affected by the depressions and obstructions -- characteristic of the microtopograpy. 
-
-%Insight into spatial patterns of groundwater discharge through evapotranspiration is critical for understanding responses of groundwater dependent ecosystems
 
 
 \section{Subgrid Model}\label{subgridmodel}
@@ -180,7 +178,6 @@ $ \delta_\text{d}(m)$ & 0.069 & 0.128 & 0.043 & 0.187 & 0.164 & 0.222 & 0.143 \\
 \section{Numerical Results and Discussions}\label{numerical-tests}
 \subsection{Simulations}
 To assess the accuracy of the numerical results of our subgrid model, we compare our results with several fine-scale ice-wedge polygons and no subgrid results. To point out, the entire fine-scale IWP is considered as one grid cell in the subgrid and no subgrid model -- the slope depends on the elevation of the corners of the fine-scale IWP. For demonstration purpose, we consider surface-only flow simulations. In our work, the seven ice-wedge polygon for fine-scale simulations are considered from Barrow Environmental Observatory (BEO) and illustrated in Figures~~\ref{polygon40} and \ref{IWP-finescale}. These polygons consist of low-center, high-center, with well established troughs (relatively uniform elevation across the trough) and obstructions in the troughs, and hence represent a broader class of polygonal landscape. Three sets of numerical results of the subgrid model are presented:
-
 \begin{description}\itemsep0pt \parskip0pt
 \item [Study I:] Subgrid uncalibrated results;
 \item [Study II:] Subgrid results with calibrated values of the depression depth listed in Table~\ref{subgrid-para};
@@ -195,24 +192,24 @@ Numerical simulations are performed for a  ``pulse numerical test" scenario -- i
 
 Figure~\ref{polygon-C06} compares the numerical results of Study I and II with the fine-scale and no subgrid model. The results of the subgrid model yield a reasonable agreement with the fine-scale results as compared to the no subgrid model. The discharge curve of the fine-scale simulation has two peaks. When the inlet boundary has obstructions (for example, polygon C06 in Figure~\ref{IWP-finescale}) and divides the incoming water into different flow channels, the water reaches the outlet boundary at different times and lead to a dual-peak (or may be multiple peaks) hydrograph.  Due to only one grid cell in the subgrid model, the dual-peak behavior is not possible to capture. The high overland conductivity in the subgrid model is reduced by increasing the surface roughness (i.e., the manning coefficient). It improves the results and replicate the recession period of the fine-scale results. It is important to see the amount of water (not available for drainage) in the system after the recession period. Figure~\ref{polygon-C06} also displays the water retained the in subgrid model and the fine-scale model -- the match is very close. It is important to point out that the recession period consistently needs the surface roughness to be adjusted in all the results reported here. \\
 Numerical simulations correspond to polygon C31 are shown in Figure~\ref{polygon-C31}. For polygon C31, the results of the subgrid model are strongly affected by the depression depth in Study I, and lead to a mismatch. However, the results of Study II and III indicate that calibrated values of the depression depth and the surface roughness improved the simulated results dramatically and yield a close match. \\ %discuss why the percolation algorithm provided a high depression depth.
-Numerical results of polygons (C40, C44, C45, A01, and B01) are shown in Figures~\ref{polygon-C40}, \ref{polygon-C44}, \ref{polygon-C45}, \ref{polygon-A01}, and \ref{polygon-B01}, respectively. displays the numerical results of Study I and II of polygon C40. Overall, the calibrated results (Study III) consistently show a better fit to the fine-scale simulations.
-
-%\subsection{Summary}
+Numerical results of polygons (C40, C44, C45, A01, and B01) are shown in Figures~\ref{polygon-C40}, \ref{polygon-C44}, \ref{polygon-C45}, \ref{polygon-A01}, and \ref{polygon-B01}, respectively. displays the numerical results of Study I and II of polygon C40. Overall, the calibrated results (Study III) consistently show a better fit to the fine-scale simulations. We close this section with the following remarks:
 \itemize{
 
-\item Increased surface roughness in the subgrid model positively affects the results -- an indication of a needed drag coefficient in the flow law. A relatively smooth discharge curve is a consequence of a lower gradient between the cell center and outlet boundary.
+\item The subgrid model favors high surface roughness that swings the results toward fine-scale simulations. A high agreement between the results of the subgrid model and fine-scale simulations due to reduced runoff is an indication of a needed drag coefficient in the flow law. Numerically, a drag coefficient helps to lower the gradient between the cell center and outlet boundary, that decreases the sharpness observed at the breakthrough and the time of hydrograph recession in the subgrid model.
 
-\item For low-centered polygons such as C45 adn A01, Study I (uncalibrated results) fails to match the hydrograph of the fine-scale simulations -- no breakthrough happens for the uncalibrated depression depths. Fine-scale simulations show that low-elevated regions may remain completely dry if they are not located in the main flow channel. However, our percolation algorithm computes the depression depth provided low-elevated spots are filled with water and a cluster is formed. In such scenario, the uncalibrated depression depths  need to be decreased by a factor of 2-3
+\item For low-centered polygons such as C45 adn A01, Study I (uncalibrated results) fails to match the hydrograph of the fine-scale simulations -- no breakthrough happens for the uncalibrated depression depths. Fine-scale simulations show that low-elevated regions may remain completely dry if they are not located in the main flow channel which completely makes sense. However, as stated earlier, our percolation algorithm fills the lowest elevation cells until the cluster of inundated cells spans the IWP. 
 
 \item Application of invaded percolation (flow in the direction of least resistance) algorithm could provide more accurate depression depths such that the subgrid simulated results replicate the fine-scale results without any calibration.
 
-\item A low-centered polygon with lowest elevation in the center and obstructions in the troughs are lowered than the raised rims, see for example polygon A01, the computed depression depth requires to be decreased by a factor of 3.
+\item A low-centered polygon with the center lower than the elevation of the trough, thand obstructions in the troughs are lowered than the raised rims, see for example polygon A01, the computed depression depth requires to be decreased by a factor of xx.
+
+%\item The shape of the hydrograph with one peak or multiple peaks is independent of the low- and high-centered polygons; for example see the results of C06 and C44 single or dual peak hydrographs are consequences of either obstructions at the inlet boundary (see; polygon C06)or along relatively less wellHigh-centered polygons (C06 and B01)
 } 
 
 %As said earlier, as long as the ice-wedge trough is well established the percolation algorithm provides reasonably accurate values of the depression depth and hence the breakthrough in the fine-scale and the subgrid model happens around the same time.  Also, the increased surface roughness positively affects the discharge curve at the breakthrough time. A
 
 
-%it is a high-centered polygon As we see experiments yielded equally good results for one-step and multistep desorption. Moreover, the addition of soil water pressure head data resulted in unique par
+%it is a high-centered polygon As we see numerical experiments yielded equally good results for SG.
 
 %POLYG31: Elevation: Min=4.510, Max = 4.772
 %POLY_A: Elevation: Min = 5.134, Max = 5.495
