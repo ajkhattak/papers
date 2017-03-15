@@ -98,7 +98,6 @@ Here we use polygonal tundra as an example. Tundra landscapes exhibit patterned 
 Pertinent to the literature, integrated suface/subsurface modeling has received considerable attention from researchers across the world; see, for example,~\cite{painter2013modeling,kurylyk2014climate,spainter2016integrated} and references therein. Here we focus only on the subgrid modeling approach. Though the concept of microtopographic features and their implications on the flow and discharge is not new, but has not been fully addressed and understood from modeling perspective. 
 % -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 In the mid-1950s, the significance of the surface microtopographic features were described in~\cite{stammers1956effect}. Panday and Huyakorn (\citeyear{panday2004fully}) presented an integrated surface/subsurface flow model with subgrid representation through the surface depressions and obstructions by modifying the overland flow governing equation. A one-dimensional simulations to study the effects of spatially varying surface roughness on flow hydrographs is presented in~\cite{huang2009influences}. In a numerical experiment at a scale of few meters, Frei et al.~(\citeyear{frei2012surface}) highlighted that surface microtopography in wetlands can lead to the formation of biogeochemical hot spots. A spatially varying rill/depression storage concept to account for microtopographic effects in a plot scale simulations for integrated surface/surface flow is presented in~\cite{frei2014representing}.
- \textbf{INCOMPLETE!!}
 %-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 The rest of the paper is organized as follows. Section \ref{field-site} introduces the Arctic patterned polygonal ground. Section~\ref{subgridmodel} presents the derivation of the governing equations of the subgrid model. A short description, for a quick reference, of the Advanced Terrestrial Simulator (ATS) and the Arcos multiphysics management framework, within which we implemented our subgrid model, is presented in Section~\ref{ATS}. In Section~\ref{numerical-tests} we compare the numerical results of our subgrid model with no subgrid model and fine-scale results to illustrate the accuracy of our subgrid model for capturing fine-scale microtopographic features. Finally, in Section~\ref{conclusion}, we offer closing remarks and future research inline with thaw-induced subsidence.
@@ -131,29 +130,28 @@ Diffusion wave equation for surface flow representation is given by,
 \begin{equation}\label{diffwaveeq}
 \frac{\partial \delta}{\partial t} + \nabla \cdot (\delta V)= q_\text{rp} + \Gamma_\text{ex}.
 \end{equation}
-Here $\delta$ represents ponded depth, $q_\text{rp}$ is rain precipitation rate, $\Gamma_\text{ex}$ is water exchange between surface and subsurface systems, $t$ is time, and $V$ denotes surface flow velocity given by,
+Here $\delta$ represents ponded depth [L], $q_\text{rp}$ is rain precipitation rate [L$^3$/(L$^2 \cdot$ T)], $\Gamma_\text{ex}$ is water exchange between surface and subsurface systems [L$^3$/(L$^2 \cdot$ T)], $t$ is time [T], and $V$ denotes surface flow velocity given by,
 \begin{equation}
 V = - \frac{\delta^{2/3}}{n_\text{man} (\| \nabla Z\| +\epsilon)^{1/2}} \nabla(Z + \delta),
 \end{equation}
-where $n_\text{man}$ is Manning's coefficient, $Z$ is surface elevation, and $\epsilon >0$ is a regularization parameter used to avoid zero bed slope. More details about the models implemented in ATS can be found here~\cite{spainter2016integrated}. Units are provided in Table~\ref{table1}.
-\begin{center}
-\begin{table}[htbp]
-\caption{Physical quantities with units}
-\begin{tabular}{| l | l |}
-\hline
-Physical quantities & SI units \\ \hline
-Ponded depth $(\delta)$ & m \\
-Elevation $(Z)$ & m \\
-Rain precipitation rate ($q_\text{rp}$) & m$^3/($m$^2$ s) \\
-Exchange term $(\Gamma_\text{ex})$& m$^3/($m$^2$ s) \\
-Manning's coefficient ($n_\text{man}) $ & m$^{-1/3}$ s \\
-Time ($t$) & s \\
-\hline
-
-\end{tabular}
-\label{table1}
-\end{table}
-\end{center}
+where $n_\text{man}$ is Manning's coefficient [L$^{-1/3} \cdot$ T)], $Z$ is surface elevation [L], and $\epsilon >0$ is a regularization parameter used to avoid zero bed slope. More details about the models implemented in ATS can be found here~\cite{spainter2016integrated}. Units are provided in Table~\ref{table1}.
+%\begin{center}
+%\begin{table}[htbp]
+%\caption{Physical quantities with units}
+%\begin{tabular}{| l | l |}
+%\hline
+%Physical quantities & SI units \\ \hline
+%Ponded depth $(\delta)$ & m \\
+%Elevation $(Z)$ & m \\
+%Rain precipitation rate ($q_\text{rp}$) & m$^3/($m$^2$ s) \\
+%Exchange term $(\Gamma_\text{ex})$& m$^3/($m$^2$ s) \\
+%Manning's coefficient ($n_\text{man}) $ & m$^{-1/3}$ s \\
+%Time ($t$) & s \\
+%\hline
+%\end{tabular}
+%\label{table1}
+%\end{table}
+%\end{center}
 \subsection{Subgrid Model}\label{subgridmodel}
 Subgrid model incorporates depressions and obstructions in coarsened models to capture microtopgraphic effects on flow. It requires to alter accumulation term and flow law in the diffusion wave equation given by Equation~\ref{diffwaveeq}.
 For example, the ponded depth $(\delta)$ in the accumulation term is typically replaced with a volumetric depth, the ponded depth that would occur if the surface were flat. A modified flow velocity is introduced to account for depressions and obstructions. A modified version of the diffusion wave equation with subgrid representation can be expressed as
@@ -244,7 +242,7 @@ $ \delta_\text{d}(m)$ & 0.069 & 0.128 & 0.043 & 0.187 & 0.164 & 0.222 & 0.143 \\
 
 \end{table}
 \end{center}
-\section{Integrated Surface/Subsurface Flow}%: A Mixed-dimensional Approach}
+\section{Integrated Surface/Subsurface Flow : A Mixed-dimensional Approach}
 Simulating fully coupled surface/subsurface thermal hydrology at large spatiotemporal scales is a challenging task. We have recently developed a mixed-dimensional modeling approach to make process-rich integrated surface/subsurface simulations tractable at watershed-scale. The approach discretizes subsurface as independent (one-dimensional) columns and indirectly coupled through a two-dimensional surface system. First, an overland thermal hydrology system is solved and then a family of one-dimensional subsurafce columns is solved. Each column in the family represents a fully coupled surface/subsurface system (without lateral flow) with surface energy balance. The approach is computationally advantageous, enables subcycling processes and allows to track thaw-induced subsidence, for more details the reader is referred to~\cite{jan2017}.
 
 
