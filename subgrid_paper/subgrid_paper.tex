@@ -7,7 +7,8 @@
 %\usepackage{natbib}
 \usepackage{tabularx,ragged2e,booktabs,caption}
 \journal{Computational Geosciences}
-
+\usepackage{multirow}
+\usepackage{hhline}
 \usepackage{placeins}
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Elsevier bibliography styles
@@ -59,7 +60,8 @@
 
 \begin{abstract}
 Permafrost-affected regions in the Arctic manifest a patterned ground, mainly characterized by ice-wedge polygons. The role of patterned polygonal ground and associated small-scale microtopography (spatial heterogeneities at a scale smaller than the size of polygons) in controlling surface/subsurface thermal hydrology is critical but conceptually well-understood. Accurate representation of microtopographic influences on flow requires fine-scale simulations, and simulating standalone fine-scale surface hydrology is feasible with modern computing tools. However, highly resolved integrated surface/subsurface thermal hydrology simulations are not tractable at watershed scale and requires proper modeling. To capture the effects of microtopographic features (such as depressions, obstructions) in coarsened model, we present a subgrid model parameterized by small-scale spatial heterogeneities.  The subgrid model alters the water storage and flow terms in the existing governing equations. We demonstrate how a few parameters extracted from the available fine-scale information can be utilized to account for microtopographic effects in coarsened watershed-scale integrated models.
-Simulations were carried out and numerical results of the subgrid model were compared both to those generated with no subgrid model and to fine-scale results of seven ice-wedge polygons. Our findings confirm that the subgrid model improves the shape of hydrographs and total water content in the system, and that the results are very close to the corresponding fine-scale simulations. Watershed-scale fully integrated surface/subsurface simulations with the subgrid model show that the surface depressions increase infiltration and reduce runoff, thereby highlighting the importance of microtopographic effects on the watershed-scale hydrology.
+Simulations were carried out and numerical results of the subgrid model were compared both to those generated with no subgrid model and to fine-scale results of seven ice-wedge polygons. Our findings confirm that the subgrid model improves the shape of hydrographs and total water content in the system, and that the results are very close to the corresponding fine-scale simulations. Watershed-scale fully integrated surface/subsurface simulations with the subgrid model yield expected results. For three scenarios based on the spatial distribution of the subgrid parameters, we observe significant difference in the hydrology (increased infiltration, reduced runoff), however our results show that the subgrid model has less effect on the thermal conditions and active layer thickness.  
+%model increases infiltration and reduces runoff, thereby highlighting the importance of microtopographic effects on the watershed-scale hydrology.
 \end{abstract}
 
 \begin{keyword}
@@ -80,7 +82,7 @@ The idea to incorporate fine-scale flow behavior in watershed-scale integrated m
 
 Fully coupled surface/subsurface three-dimensional simulations in a complex hydrological environment at larger spatiotemporal scales is a challenging task even if coarsened models are considered~\cite{frei2010effects}. Further significant challenges arise when simulating permafrost dynamics because a more complex set of governing equations needs to be solved to accurately represent all the relevant processes~\cite{painter2013modeling,jan2017}. We have recently developed a mixed-dimensional model to efficiently simulate surface/subsurface thermal hydrology of permafrost-affected landscapes at watershed scales; reported in~\cite{jan2017}. In this modeling approach, the subsurface is discretized as independent columns and coupled through a surface flow system; more details are provided in the subsequent sections. Here we intend to apply the subgrid parametrization to the lateral flow part only (two-dimensional surface system) in the mixed-dimensional modeling approach. This is one aspect of incorporating the microtopographic effects in watershed-scale integrated models, however, in general, both the surface and subsurface require a subgrid model. 
 In this work, we are testing a hypothesis that the effects of microtopography can be captured in coarsened models through the use of a subgrid model. We evaluate one possible form of that model, and explore how parameters can be deduced from the available information.
-that we intend to use the subgrid parametrization with a
+
  %--------------------------
 Here we use polygonal tundra as an example. Tundra landscapes exhibit patterned polygonal ground (illustrated in Figure~\ref{tundra-sitesA-B}) developed by repeated freezing and thawing of ground soil. Thawing ice-wedge polygons results in a complex mosaic of topographic patterns and lead to spatial heterogeneities both at and below the scale of the size of polygon. We call spatial scale variability in the topography at and below the scale of the size of polygon as macro- and micro-topography, respectively. Small scale features of the polygonal landscapes can have regional impacts on hydrology, active-layer thickness and permafrost degradation. Thus simulating permafrost soils at a scale of macrotopography (or larger) without taking small-scale information into account could lead to inaccurate estimate of carbon release and energy balance etc. under warming trends in the Arctic landscapes; for example see~\cite{liljedahl2016pan,lu2012modeling,andresen2015disappearing,holden2005peatland}. More details are provided in section~\ref{field-site}.
 \begin{figure}[!h]
@@ -229,8 +231,20 @@ In summary, we hypothesize that the microtopographic effects on surface flow can
 \item Specific excluded volume $\delta_\text{ex}$, the soil volume above the microtopographic low point normalized by IWP area.
 \item Depression depth $\delta$, the difference between the maximum and minimum elevation of the cells in the spanning cluster at the percolation threshold.
 \end{itemize}
-The subgrid releif and specific excluded volume come directly from the microtopography (univariate statistics). The depression depth requires a simple percolation algorithm to identify the spanning cluster at the percolation threshold. Table~\ref{subgrid-para} displays maximum elevation, specific excluded volume and depression depths, those values correspond to seven IWPs depicted in Figure~\ref{IWP-finescale}.
+The subgrid releif and specific excluded volume come directly from the microtopography (univariate statistics). The depression depth requires a simple percolation algorithm to identify the spanning cluster at the percolation threshold. 
 
+\section{Integrated Surface/Subsurface Flow : A Mixed-dimensional Approach}
+Simulating fully coupled surface/subsurface thermal hydrology at large spatiotemporal scales is a challenging task. We have recently developed a mixed-dimensional modeling approach to make process-rich integrated surface/subsurface simulations tractable at watershed-scale. The approach discretizes subsurface as independent (one-dimensional) columns and indirectly coupled through a two-dimensional surface system. First, an overland thermal hydrology system is solved and then a family of one-dimensional subsurafce columns is solved. Each column in the family represents a fully coupled surface/subsurface system (without lateral flow) with surface energy balance. The approach is computationally advantageous, enables subcycling processes and allows to track thaw-induced subsidence, for more details the reader is referred to~\cite{jan2017}.
+
+
+\section{The Advanced Terrestrial Simulator (ATS)}\label{ATS}
+Here we provide a very brief overview of the ATS for a reference, for more details about the software infrastructure we refer the reader to~\cite{ecoon2016managing, ats-website}. A fully integrated surface/subsurface and snow distribution modeling capability implemented in ATS are available here~\cite{spainter2016integrated, atchley2015}. As discussed earlier, a mixed-dimensional modeling strategy, mainly designed for the simulations of low-relief permafrost-affected regions, has implemented in ATS and reported in~\cite{jan2017}. The ATS is a publically-available massively parallel computer code, an extended version of Amanzi (flow and reactive transport simulator; see~\cite{moulton2012high}), based on process management tool called Arcos. In ATS, a proces kernel (PK) refers to governing mathematical equations representing a particular (or coupled) physical process(es). Further, Multiprocess Coordinators (MPCs) are available to facilitate coupling amoung PKs. The framework allows to dynamically build a complex/coupled hierarchical model structure. The flexible extensibility feature of the Arcos framework allowed to easily implement our subgrid model and couple with the existing PKs.
+
+\section{Numerical Results and Discussions}\label{numerical-tests}
+\FloatBarrier
+
+\subsection{Simulations}
+To assess the accuracy of numerical results of our subgrid model, we compare our results with fine-scale simulations and no subgrid model (presented in section \ref{surf-flow-system}). For demonstration purpose, the comparison is made for surface-only flow simulations. In our work, the seven ice-wedge polygon for fine-scale simulations are considered from Barrow Environmental Observatory (BEO) and illustrated in Figure~\ref{IWP-finescale}. The ice-wedge polygons named A, B and C correspond to the NGEE Arctic field sites A, B and C (see Figure~\ref{ngee-arctic-fieldsites}), respectively. Those polygons consist of low-centered, high-centered, with well established troughs (relatively uniform elevation across the trough) and obstructions in the troughs, and hence represent a broader class of polygonal landscape. Table~\ref{subgrid-para} displays subgrid parameters (that is, maximum elevation, specific excluded volume and depression depths) extracted from fine-scale topography of seven IWPs depicted in Figure~\ref{IWP-finescale}.
 \begin{center}
 \begin{table}[htbp]
 \caption{Parameters extracted from fine-scale microtopography for subgrid model. Top row corresponds to different polygons, and first column are the extracted parameters.}\label{subgrid-para}
@@ -244,17 +258,8 @@ $ \delta_\text{d}(m)$ & 0.069 & 0.128 & 0.043 & 0.187 & 0.164 & 0.222 & 0.143 \\
 
 \end{table}
 \end{center}
-\section{Integrated Surface/Subsurface Flow : A Mixed-dimensional Approach}
-Simulating fully coupled surface/subsurface thermal hydrology at large spatiotemporal scales is a challenging task. We have recently developed a mixed-dimensional modeling approach to make process-rich integrated surface/subsurface simulations tractable at watershed-scale. The approach discretizes subsurface as independent (one-dimensional) columns and indirectly coupled through a two-dimensional surface system. First, an overland thermal hydrology system is solved and then a family of one-dimensional subsurafce columns is solved. Each column in the family represents a fully coupled surface/subsurface system (without lateral flow) with surface energy balance. The approach is computationally advantageous, enables subcycling processes and allows to track thaw-induced subsidence, for more details the reader is referred to~\cite{jan2017}.
 
-
-\section{The Advanced Terrestrial Simulator (ATS)}\label{ATS}
-Here we provide a very brief overview of the ATS for a reference, for more details about the software infrastructure we refer the reader to~\cite{ecoon2016managing, ats-website}. A fully integrated surface/subsurface and snow distribution modeling capability implemented in ATS are available here~\cite{spainter2016integrated, atchley2015}. As discussed earlier, a mixed-dimensional modeling strategy, mainly designed for the simulations of low-relief permafrost-affected regions, has implemented in ATS and reported in~\cite{jan2017}. The ATS is a publically-available massively parallel computer code, an extended version of Amanzi (flow and reactive transport simulator; see~\cite{moulton2012high}), based on process management tool called Arcos. In ATS, a proces kernel (PK) refers to governing mathematical equations representing a particular (or coupled) physical process(es). Further, Multiprocess Coordinators (MPCs) are available to facilitate coupling amoung PKs. The framework allows to dynamically build a complex/coupled hierarchical model structure. The flexible extensibility feature of the Arcos framework allowed to easily implement our subgrid model and couple with the existing PKs.
-
-\section{Numerical Results and Discussions}\label{numerical-tests}
-\FloatBarrier
-\subsection{Simulations}
-To assess the accuracy of numerical results of our subgrid model, we compare our results with fine-scale simulations and no subgrid model (presented in section \ref{surf-flow-system}). For demonstration purpose, the comparison is made for surface-only flow simulations. In our work, the seven ice-wedge polygon for fine-scale simulations are considered from Barrow Environmental Observatory (BEO) and illustrated in Figure~\ref{IWP-finescale}. The ice-wedge polygons named A, B and C correspond to the NGEE Arctic field sites A, B and C (see Figure~\ref{ngee-arctic-fieldsites}), respectively. Those polygons consist of low-centered, high-centered, with well established troughs (relatively uniform elevation across the trough) and obstructions in the troughs, and hence represent a broader class of polygonal landscape. Three sets of numerical experiments are performed with the subgrid model:
+To validate the accuracy of the subgrid model, three sets of numerical experiments are performed and compared with the results of both the fine-scale model and no subgrid model:
 
 
 \begin{description}\itemsep0pt \parskip0pt
@@ -287,7 +292,7 @@ The rainfall events are not considered in Studies I, II and III. The presence of
 
 
 \FloatBarrier
-\subsection{Results and Discussions}
+\subsection{Results and Discussions : Single Ice-Wedge Polygons}
 
 Numerical results presented in this subsection correspond to the three studies mentioned above. We compare our results with fine-scale simulations of single IWPs, and we do not present any results on a cluster of fine-scale IWPs. We have carried out detailed simulations on all the polygons shown in Figure~\ref{IWP-finescale}, however, we discuss the results of polygon C44 in more detail and these results serve as a representative of all the remaining polygons as far as the accuracy and shape of the hydrographs are concerned. Figure~\ref{polygon-C44} compares numerical results of the subgrid model with the fine-scale simulations, and no subgrid model of polygon C44. Clearly, Study I fails to match the fine-scale simulations, delayed breakthrough (by 5 hours) in the subgrid model is an indication of higher depression depth computed by the percolation algorithm; see Figure~\ref{polygon-C44}(a). Simulations with a calibrated depression depth, Study II, dramatically improve the shape of the hydrogragh and the water content in the system as shown in see Figure~\ref{polygon-C44}(b). However, a mismatch appears at the time of breakthrough and the beginning of recession period even with the use of a calibrated depression depth. As alluded to earlier, this is due to the huge head gradient between the center and seepage face, and physically makes sense. Figure~\ref{polygon-C44}(c) illustrates the results of Study III, it is evident that our subgrid model reproduces the fine-scale behavior, and the numerical results are identical to the fine-scale simulations. However, a complete mismatch is observed in numerical results of the no subgrid model. Early breakthrough and drier surface at the end of simulation are associated with no obstructions and depressions presence in the no subgrid model. In contrast to the fine-scale and subgrid models, as long as the head gradient is sufficient enough the drainage continues at the outlet.
 
@@ -371,8 +376,6 @@ Numerical simulations correspond to polygons C40, C45, A01, and B01 are shown in
 \label{polygon-A01}
 \end{figure}
 
-
-
 \begin{figure}[!h]
 \centering
 %\includegraphics[width=6.2cm, height=5.5cm]{./figures/POLYGON_B01/POLYGON_B01discharge.png}
@@ -385,9 +388,66 @@ Numerical simulations correspond to polygons C40, C45, A01, and B01 are shown in
 \label{polygon-B01}
 \end{figure}
 
+\subsection{Results and Discussions : Watershed-scale Integrated Surface/Subsurface}
+To assess the importance of microtopographic effects on the watershed-scale hydrology, three different scenarios based on the depression and obstruction features of polygons are developed; (S$_1$) topography at a scale of polygons does not vary, that is, each polygon has same features, (S$_2$) uniformly generated spatially varying topography, (S$_3$) normally generated spatial heterogeneity in the topography.  
+We demonstrate that independent of the choice of the polygonal landscape, the subgrid model and hence the fine-scale microtopography has significant effects on the watershed-scale hydrology. Fig.~\ref{hetero-sg-parameters} plots the depression depths of polygonal tundras described in S$_2$ and S$_3$. Other subgrid parameters (maximum elevation and excluded volume) also vary spatially but are not shown here, however the drag factor $\alpha$ is set to $0.16$ across the domain. Table~\ref{dist-limits} displays extreme values of the subgrid parameters of the three hypothetical polygonal tundras. The excluded soil volume is made correlated to the maximum ponded depth, this correlation can be seen for real ice-wedge polygons as well, see Table~\ref{subgrid-para}. 
+
+For model spin-up and boundary conditions the reader is referred to~\cite{spainter2016integrated}, and the soil (moss, peat, mineral)  properties are consistent with the work reported in~\cite{atchley2015}. After spinup, the model was forced over a 10-year loop with daily meteorological data from 2013 at Barrow, Alaska. Numerical results presented in this subsection correspond to the tenth year. Discharge rate and cumulative discharge from the watershed for the no subgrid model and the subgrid model for three landscapes are compared in Fig.~\ref{mdm-discharge}. Clearly, higher peak and more cumulative discharge in the no subgrid model as compared to the subgrid model are evident, and a consequence of ignored processes associated with depressions and obstructions. Fig.~\ref{volumetric-pd} shows volumetric ponded depth of the subgrid and no subgrid models. Since the depressions pond water and yield less cumulative discharge, so more surface wetness is observed in the subgrid model. The ponded water in the surface depressions is solely available for infiltration and evaporation. Average gas saturation resulted from no subgrid and subgrid models are plotted in Fig~\ref{gas-saturation}, decrease in the gas saturation in the subgrid model implies more infiltration. Average gas saturation is computed as follows:
+\begin{equation}
+S_g^{\text{avg}} = \frac{1}{m}\sum\limits_{i=1}^{m}{ \left ( \sum\limits_{j=1}^{n} S_g(i,j) \right) }.
+\end{equation}
+Here $m$ denotes total number of subsurface columns and $n$ represents total number of cells per column.
+To conclude, numerical simulations of the integrated surface/subsurface model with subgrid parameterization show significant influences on the surface wetness and hydrographs, however relatively less effects on the active layer thickness and thermal surface/subsurface conditions for the current climate.
+Note that in this work, we are not making an attempt to compare simulated results of the subgrid model for different polygonal tundras. For watershed-scale integrated simulations, the focus is on the comparison of the numerical results of the subgrid and no subgrid models.
+\begin{figure}[!h]
+\centering
+\includegraphics[width=6.2cm, height=5.5cm]{./figures/DeprDepth/Mrun1SG.png}
+\includegraphics[width=6.2cm, height=5.2cm]{./figures/DeprDepth/Mrun1SG-Hist.png} \\
+\includegraphics[width=6.2cm, height=5.5cm]{./figures/DeprDepth/Mrun4SG.png}
+\includegraphics[width=6.2cm, height=5.2cm]{./figures/DeprDepth/Mrun4SG-Hist.png} \\
+\caption{An illustration of randomly generated landscapes. Uniformly (top) and normally (bottom) distributed depressions.}
+\label{hetero-sg-parameters}
+\end{figure}
+
+\begin{table}
+\caption{Range of subgrid parameters for three hypothetical polygonal tundras. Left column correspond to the type of polygonal tundra.}
+\begin{tabular}{|p{9.5mm}|p{7mm}|c|p{7mm}|p{7mm}|c|p{7mm}|c|c|c|c|c|c|p{7mm}c|p{6mm}|c|}
+\hline
+\multirow{2}{*}{} & \multicolumn{3}{c|}{$\delta_\text{d}(m)$} & \multicolumn{3}{c|}{$\delta_\text{max}(m)$}  & \multicolumn{3}{c|}{$\delta_\text{ex}(m)$}  \\ \hhline{~---------}
+& max & min & mean & max & min & mean & max & min & mean \\ \hline
+S$_1$ & 0.13 & 0.13 & 0.13 & 0.35 & 0.35 & 0.35 & 0.15 & 0.15 & 0.15 \\
+S$_2$ & 0.03 & 0.13 & 0.08 & 0.15 & 0.4 & 0.27 & 0.047 & 0.22 & 0.14 \\
+S$_3$ & 0.037 & 0.165 & 0.106 & 0.315 & 0.436 & 0.375 & 0.144 & 0.235 & 0.188 \\ \hline
+\end{tabular}
+\label{dist-limits}
+\end{table}
+
+
+\begin{figure}[!h]
+\centering 
+\includegraphics[width=6.2cm, height=5.5cm]{./figures/MDM/DischargeRate-All-10yr.png}
+\includegraphics[width=6.2cm, height=5.5cm]{./figures/MDM/CumulativeDischarge-All-10yr.png} 
+\caption{Comparing the discharge rate and cumulative discharge resulted from the no subgrid model and the subgrid model for three landscapes (S$_1$, S$_2$, and S$_3$).}
+\label{mdm-discharge}
+\end{figure}
+
+\begin{figure}[!h]
+\centering 
+\includegraphics[width=6.2cm, height=5.5cm]{./figures/MDM/VPD-NSG-10yr-165d.png}
+\includegraphics[width=6.2cm, height=5.5cm]{./figures/MDM/VPD-Mrun4SG-10yr-165d.png} 
+\caption{Volumetric ponded depth of the no subgrid (left) and subgrid (right) models for polygonal tundra S$_2$. Red implies dry surface.}
+\label{volumetric-pd}
+\end{figure}
+
+\begin{figure}[!h]
+\centering 
+\includegraphics[width=9.2cm, height=5.5cm]{./figures/MDM/GS-Mrun1SG-10yr.png}
+\caption{Shown is the average gas saturation from the simulations of the no subgrid model and subgrid model for polygonal tundra S$_2$. Average is obtained by summing the gas saturation of a column and then averaging over all the columns.}
+\label{gas-saturation}
+\end{figure}
 
 \subsection{Additional Remarks}
-
+{
 \itemize{
 
 \item Not surprisingly, the subgrid model favors high surface roughness that swings the results toward fine-scale simulations. A high agreement between the results of the subgrid model and fine-scale simulations due to reduced runoff is an indication of a needed drag coefficient in the flow law. A linear regression fit to the drag factor vs. the depression depth is depicted in Figure~\ref{curvefit-dd-manning}. The drag factor varies between zero and one, as the depression depth decreases the drag factor goes to unity -- a representation of flow law over a flat surface. The fit indicates the resistance to flow increases with increasing depression. This finding is highly consistent with the discussion regarding the conductance terms in~\cite{panday2004fully}.
@@ -420,16 +480,17 @@ Numerical simulations correspond to polygons C40, C45, A01, and B01 are shown in
 \caption{(Polygon A01) An illustration of the numerical results based on the choice of the inlet and outlet boundaries. The orientation affects the match between the fine-scale and subgrid model. (a) inlet$_1$ and outlet$_1$ boundary; (b) inlet$_2$ and outlet$_2$  boundary.}
 \label{polygon-A01-fig2}
 \end{figure}
-
+}
 
 \section{Conclusions}\label{conclusion}
 
 The subgrid model presented in this paper is aimed at incorporating the microtopographic effects in the governing equations for the simulations of integrated surface/subsurface processes at watershed-scale. Standalone fine-scale surface simulations are tractable with the existing sophisticated computing tools. However, a significant challenge is how to capture accurate flow behavior in the watershed-scale integrated models because fine-scale simulations of integrated models at such a scale are not feasible.
 Seven fine-scale ice-wedge polygons are considered to demonstrate that the effect of surface microtopography can be captured in coarsened models through the use of a subgrid model. Numerical results of the subgrid model compare very well with the fine-scale simulations. Our analysis shows that accurate estimate of depression depth is a determining factor for a close match between subgrid and fine-scale simulations.
 Three different studies are conducted to estimate the parameters for the subgrid representation: (1) direct measurements from topography; (2) insight from fine-scale simulations to calibrate; (3) and empirical adjustment of topography-derived values. 
-Thus the effort to obtain a reasonable match with the fine-scale simulations using coarsened meshes with a subgrid representation was highly successful. The model is applied to 468 polygons watershed and a comparison is made with no subgrid model. Numerical results demonstrate the importance of microtopography effects in watershed-scale simulations. \textbf{(this part will change once we add 486 polygons results)}.
+Thus the effort to obtain a reasonable match with the fine-scale simulations using coarsened meshes with a subgrid representation was highly successful. The model is applied to 468 polygons watershed and a comparison is made with no subgrid model. Our preliminary numerical results demonstrate that the subgrid parameterization significantly effects the surface wetness and shape of hydrographs. However, the subgrid model has less significance in regard to active layer thickness and thermal surface/subsurface conditions when simulated under the current climate.
+
 The subgrid model's ability to accurately capture fine-scale flow behavior provides confidence that a few parameters extracted from the available microtopographic data can be used to incorporate the fine-scale effects in watershed-scale integrated models.
-However, more research is needed to extend the approach developed here to accurately simulate problems involving both runoff and precipitation.
+However, more research is needed to extend the approach developed here to more accurately simulate problems involving both runoff and rain/snow precipitation.
 
 
 \section*{References}
