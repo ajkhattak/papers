@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: mixed-dim-model.aux
+The style file: model1-num-names.bst
+Database file #1: reference.bib
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--empty journal in pachauri2014climate
+Warning--empty journal in moulton2012high
+Warning--empty journal in michael2003trilinos
+You've used 51 entries,
+            2910 wiz_defined-function locations,
+            946 strings with 17443 characters,
+and the built_in function-call counts, 37891 in all, are:
+= -- 2650
+> -- 2201
+< -- 16
++ -- 840
+- -- 771
+* -- 4968
+:= -- 5674
+add.period$ -- 56
+call.type$ -- 51
+change.case$ -- 512
+chr.to.int$ -- 51
+cite$ -- 54
+duplicate$ -- 2318
+empty$ -- 2164
+format.name$ -- 924
+if$ -- 6665
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 600
+newline$ -- 257
+num.names$ -- 204
+pop$ -- 654
+preamble$ -- 1
+purify$ -- 510
+quote$ -- 0
+skip$ -- 560
+stack$ -- 0
+substring$ -- 1636
+swap$ -- 2200
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 453
+warning$ -- 3
+while$ -- 225
+width$ -- 0
+write$ -- 667
+(There were 3 warnings)
