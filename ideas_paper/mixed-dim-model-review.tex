@@ -75,8 +75,7 @@
 \begin{abstract}
 Integrated surface/subsurface models for simulating the thermal hydrology of permafrost-affected regions in a warming climate have recently become available, but computational demands of those new process-rich simulation tools have thus far limited their applications to one-dimensional or small two-dimensional simulations. 
 We present a mixed-dimensional model structure for efficiently simulating surface/subsurface thermal hydrology in low-relief permafrost regions at watershed scales.
-The approach simplifies the full three-dimensional system to a two-dimensional overland thermal hydrology system with a family of one-dimensional vertical columns, where each column represents a fully coupled surface/subsurface thermal hydrology system without lateral flow.
-The overland thermal hydrology system is then operator split, incrementally updating lateral surface fluxes with no sources to redistribute mass and energy horizontally, followed and update including sources and sinks to couple to the columns.
+The approach replaces a full three-dimensional system with a two-dimensional overland thermal hydrology system and a family of one-dimensional vertical columns, where each column represents a fully coupled surface/subsurface thermal hydrology system without lateral flow. The system is then operator split, sequentially updating the overland flow system without sources and the one-dimensional columns without lateral flows. 
 We show that the approach is highly scalable, supports subcycling of different processes, and compares well with the corresponding fully three-dimensional representation at significantly less computational cost. These advances enable state-of-the-art representations of freezing soil physics to be coupled with thermal overland flow and surface energy balance at scales of 100s of meters.
 Although developed and demonstrated for permafrost thermal hydrology, the mixed-dimensional model structure is applicable to integrated surface/subsurface thermal hydrology in general. 
 \end{abstract}
@@ -140,7 +139,7 @@ Snapshots of ice and liquid saturation indices in cross-section across two ice-w
 
 
 \section{An Intermediate-scale Model}\label{mixed-dim-model}
-Recognizing the lack of sensitivity to lateral, subsurface flow described above, we derive an intermediate-scale model to leverage this simplification.
+Recognizing the lack of sensitivity to lateral, subsurface flow described above, we propose an intermediate-scale model to leverage this simplification.
 This model has two components: a spatial structure that combines one-dimensional and two-dimensional domains, and an operator splitting scheme that decouples the columns by solving lateral flow on the surface system independently of the sources and sinks of mass and energy which couple the surface and subsurface systems.
 We describe those aspects in this section, followed by a discussion of the refactoring strategy used to implement this model within the ATS.
 
@@ -148,30 +147,31 @@ We describe those aspects in this section, followed by a discussion of the refac
 To build an intermediate scale model, we first tessellate the land surface into $N$ surface cells, where each cell in the surface mesh corresponds to an ice-wedge polygon.
 Custom mesh generation tools are then used to construct a 3D mesh by extruding each of the surface polygons vertically into the subsurface, introducing soil layering, etc.
 This 3D mesh represents the entire domain of interest and is referred to as the primary mesh.
-For the purpose of this model, each tesselated ice-wedge polygon, along with the volume of soil directly below it, is extracted as a single, one-dimensional (in the z-direction), column of soil.
-On each column, vertical flow of mass and transport of energy are solved, and on each column's surface, a (local) surface balance is performed to determine the net source of mass and energy into the system.
-These columns are then coupled through lateral surface flow, which quickly moves water and energy throughout the domain.
-We note that strong (globally implicit) coupling of the surface-to-subsurface fluxes are critically important for mass and energy conservation and accuracy of the system through strong nonlinearities.
+For the purpose of this model, each tessellated ice-wedge polygon, along with the volume of soil directly below it, is extracted as a single, one-dimensional (in the z-direction) column. 
+On each column, vertical flow of mass and transport of energy are solved, allowing for ponding of water and accumulation of associated energy on each column's surface. A surface balance is also performed on each column’s surface to determine the net source of mass and energy into the system. 
+We note that strong (implicit) coupling of the surface, subsurface, and surface energy balance are critically important for accuracy and stability of the system in the presence of strong nonlinearities; this is imposed by solving each column as an integrated system that includes a surface cell in addition to the soil below. 
+The columns are then coupled through lateral surface flow, which quickly moves water and energy throughout the domain.
+
 %
 \begin{figure}[!htpb]
 \centering
 \includegraphics[height = 7.5cm, width=10cm]{figures/mixed-dim-model.png}
-\caption{An illustration of the independent 1D subsurface columns coupled to the overland system.}
+\caption{An illustration of the independent 1D columns coupled to the overland system. Although shown here as a subsurface system only, each column also includes a single surface cell with the soil column, and is coupled to a surface energy balance calculation.}
 \label{surf-cols}
 \end{figure}
 
 \subsection{Operator Splitting Scheme}
-Due to this needed strong coupling between the surface and subsurface, the above mixed-dimensional strategy alone still results in a computational expensive system of equations.
-The tight coupling results in the need to solve all the columns and the surface flow equations simultaneously.
-To break this system, we develop a two-stage operator-split strategy for the surface flow and energy equations.
-Under this strategy, we split the lateral fluxes from the coupling fluxes, incrementally advancing one and then the other.
+Due to the need for strong coupling between the surface and subsurface, the above mixed-dimensional strategy would, by itself, still result in a computationally expensive system of equations that 
+solves all the columns and the surface flow equations simultaneously.
+To reduce that computational burden, we developed a two-stage operator-split strategy for the surface flow and energy equations.
+Under this strategy, we split the lateral fluxes from the coupling fluxes, first advancing one and then the other.
 In the first stage of the splitting, lateral fluxes are allowed to redistribute water and energy across the surface domain with no sources or sinks.
 This stage is hereafter called the ``overland system.''
-Then, in a second update, the coupling fluxes and columnar subsurface may be solved implicitly, but independently of every other column.
+Then, in a second update, the coupling fluxes and columnar subsurface are solved implicitly, but independently of every other column.
 Each column consists then of the subsurface thermal hydrology, surface energy balance, and surface ponding and energy exchange fluxes with no lateral flow.
 This stage is hereafter called the ``column-surface system.''
 This splitting is shown schematically in Fig.~\ref{coupling-schematic}.
-For the sake of clarity, we will refer to the pressure and temperature fields after the first stage as ``overland-flow'' pressure and temperature, while those after the second step will be called ``subsurface'' and ``column-surface'' pressures and temperatures.
+For the sake of clarity, we will refer to the pressure and temperature fields after the first stage as ``overland-flow'' pressure and temperature, while those after the second step will be called ``subsurface'' and ``column-surface'' pressures and temperatures. The splitting scheme conserves mass and energy but introduces splitting error, which is quantified through numerical experiments below. 
 %
 \begin{figure}[h]
 \centering
@@ -185,7 +185,7 @@ For the sake of clarity, we will refer to the pressure and temperature fields af
 
 \subsection{Model Implementation with ATS and Arcos}
 This implementation of this strategy requires significant software infrastructure and refactoring support.
-First, and not trivially, physics and simulation data must be entirely modular and encapsulated, so that multiple instances of each physics process can be instantiated, allowing seperate solution on multiple domains.
+First, and not trivially, physics and simulation data must be entirely modular and encapsulated, so that multiple instances of each physics process can be instantiated, allowing separate solution on multiple domains.
 Next, coupling these many processes on many domains requires a flexible, hierarchical coupling framework.
 Much of this was supported by Amanzi-ATS's multiphysics library, Arcos. \newtext{A brief overview of the Arcos framework is provided in section~\ref{arcos-framework}, for more details see~\cite{coon2016managing}. }
 Arcos represents physics on these domains as a hierarchical \newtext{Process Kernel} (PK) tree which shows how the processes are coupled on and across these domains, as illustrated in Fig.~\ref{pk-tree}.
@@ -198,7 +198,7 @@ The tree attached to the black octagon shape is replicated across all PK-I, I $=
 \begin{figure}[!htpb]
 \centering
 \includegraphics[height = 7.5cm, width=11cm]{figures/process-tree1.png}
-\caption{A customized hierarchical structure of the process kernels. Blue blocks highlights independent process kernels; Light blue blocks strongly coupled independent process kernels; Orange blocks represent weak couplers. \newtext{Multiprocess Coordinator (MPC) highlighted by the light blue blocks couples the lower level PKs. A Process Kernel in the lower levels represents a discrete partial differential equation.}}
+\caption{A customized hierarchical structure of the process kernels. Blue blocks highlights independent process kernels; Light blue blocks strongly coupled independent process kernels; Orange blocks represent weak couplers. \newtext{Multiprocess Coordinator (MPC) highlighted by the light blue blocks couple the lower level PKs. A Process Kernel in the lower levels represents a single partial differential equation.}}
 \label{pk-tree}
 \end{figure}
 
@@ -218,14 +218,14 @@ Once this is done, Amanzi-ATS's existing operators can work on this mesh without
 Furthermore, this mesh follows polygonal ground, and therefore consists of stacked polygonal-prisms.
 Few mesh and visualization libraries or utilities support this fully-unstructured mesh type; a Silo\cite{silo} capability was added to to Amanzi-ATS's existing output options to enable visualization of the resulting solution.
 
-Each of these refactors was accomplished in reasonable time thanks to a close adherance to computational software best practices.
+Each of these refactors was accomplished in reasonable time thanks to a close adherence to computational software best practices.
 A series of unit and regression tests were added for each new capability, and the existing regression tests were updated with the domain prefixes.
 Version control enabled close collaboration on this process across multiple developers, and project-management Kanban tools were used to ensure each developer in the workflow knew the needs of the client code component.
 These best practices, along with the use of libraries such as Silo, MSTK, and Arcos, greatly improved the efficiency of what otherwise would have been a difficult development effort.
 
 \section{Results and Discussions}\label{numerical-tests}
 
-In this section, we present numerical results that highlights the accuracy and efficiency of our modeling technique. At the development stage, several numerical experiments were performed to verify the physical behavior of the refactored modules (PKs) of the ATS, code verification details are presented in~\ref{code-verification}. The spinup process (i.e., model's initialization) has been described in detail in~\cite{spainter2016integrated}. 
+In this section, we present numerical results that highlight the accuracy and efficiency of our modeling technique. At the development stage, several numerical experiments were performed to verify the physical behavior of the refactored modules (PKs) of the ATS, code verification details are presented in~\ref{code-verification}. The spinup process (i.e., model's initialization) has been described in detail in~\cite{spainter2016integrated}. 
 
 
 \subsection {Numerical Results -- A Comparative Study} 
@@ -364,7 +364,7 @@ Our intermediate-scale model for integrated surface/subsurface thermal hydrology
 
 An operator splitting algorithm is used to advance our mixed-dimensional model. First, we solve a two-dimensional surface thermal hydrology system that spatially distributes mass and energy, and initializes the system of the second step. The second step solves a family of independent one-dimensional columns, where each represents an integrated system of the subsurface, surface ponding and surface energy balance. That step updates the 2D surface system of the first step for the next iteration.
 
-We compared our numerical results to the conventional scheme of a fully 3D subsurface that is strongly coupled to a surface system to demonstrate the efficiency and accuracy of our modeling approach. The fully coupled results act as a benchmark for our scheme. Numerical results show our scheme closely approximates the fully coupled system but is significantly more efficient. The scheme also allows for subcycling of individual subdomains, which further improves the numerical efficiency. 
+We compared our numerical results to the conventional scheme of a fully 3D subsurface that is strongly coupled to a surface system to demonstrate the efficiency and accuracy of our modeling approach. The fully coupled results act as a benchmark for our scheme. Numerical results show our scheme closely approximates the fully coupled system but is significantly more efficient. The scheme also allows for subcycling of individual subdomains, which further improves the numerical efficiency. With subcycling we see about an order of magnitude improvement in execution time compared to the fully 3D configuration on a 75-polygon mesh. However, we expect the computational advantages to improve with the system size. Indeed, we were not able to run the larger domain in fully 3D mode due to computational limitations, but were readily able to do it with the mixed dimensional approximation. Given the good scaling properties of our approach, we anticipate that simulations resolving individual ice-wedge polygons are now feasible at scales corresponding to those of a next-generation Earth system model ($\approx$ 10 km). 
 
 This work is part of a larger effort to provide process-rich, watershed-scale simulations capability for permafrost regions.  A next step would be to incorporate a subgrid model to represent the effects of  variations of topography below our discretization unit of the ice wedge polygon. Another future direction is to represent thaw-induced subsidence. Thawing of permafrost and melting of massive subsurface ice can cause differential subsidence, leading to dynamic microtopography (low-centered polygons can transform to high-centered polygons)~\cite{jorgenson2006abrupt,liljedahl2012ice}, substantial changes in hydrology and soil moisture, and altered drainage networks, thus potentially transforming a dry region to a wetland ecosystem~\cite{hinzman2005evidence,rowland2010arctic}. This modeling strategy is designed to tractably represent  thaw-induced subsidence. Representing subsidence in one dimension is significantly easier than a fully three-dimensional representation because mesh tangling and other mesh quality issues arise in a fully three-dimensional dynamic mesh but are avoided in one dimension. Indeed, simulations of thaw-induced subsidence on a single one-dimensional integrated surface/subsurface system has already been demonstrated \cite{painter2013modeling}; the work described here will allow the same techniques to be used at scale with many columns coupled to an overland flow system. Lastly, refactoring ATS not only supports subdomain modeling techniques but is also potentially useful future extensions. We can efficiently implement and independently test many process representations (physical, chemical, biological and geological processes) as PKs and let them interact through MPCs. 
  
