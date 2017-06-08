@@ -1,0 +1,65 @@
+%\documentstyle{article}
+\documentclass[12pt]{article}\usepackage{amsmath, amssymb, graphicx, array}
+\pagestyle{empty}
+\topmargin=0in
+\textheight=7.5in
+\oddsidemargin=.125in
+\evensidemargin=.125in
+\textwidth=6.0in
+\begin{document}
+\large
+
+%\input{UTlogomath.ltx}
+%\input{logomath2.ltx}
+\large
+
+
+
+
+\hglue4in
+\begin{tabular}{l}
+March 13, 2017
+\end{tabular}
+
+\bigskip
+\begin{flushleft}
+Clint N. Dawson\\
+Editor in Chief\\
+Computational Geosciences\\
+Ref: COMG-D-16-00227
+\end{flushleft}
+
+
+\centerline{\bf Responses to Reviewer \#2}
+
+\bigskip
+\bigskip
+
+
+
+\begin{itemize}
+
+\item 228: PK trees are not clear. Is Acros a coupling infrastructure? Some more details would be helpful. \\ \\
+Response: Relevant information has been added for clarification.
+\item 234: Perhaps I missed it, what is MPC? \\ \\ 
+Response: Multiprocess Coordinator manages the coupling among process kernels. Relevant information has been added.
+\item 240: How is the information/simulation data passed between process kernels? \\ \\
+Response:  Ethan??
+\item 255: Is that limiting the representation of heterogeneity? \\ \\
+Response: Scott??
+\item 290: Provide time step information. How sensitive are the results to the time step size? \\ \\
+Response:  Simulations have been performed with several maximum time-steps (less than 1 day) and no significant changes have been observed.
+\item 309: Is there a way to perform a dimensional analysis and thus generalize the results perhaps? \\ \\
+Response: Scott??
+\item Figure 9: Look like it has been stretched! \\ \\
+Response: Corrected!
+\item Figure 11: Wouldn't the thaw depth error accumulate from season to season? \\ \\
+Response: The annual thaw depth is mainly determined by the variations in temperature during the summer and in our experience the previous year history has less effect on the annual thaw depth. 
+\item Figure 13: Is it possible to juxtapose maps of fully 3D simulations to interrogate differences in the patterns? \\ \\
+Response: Given the complexity of the permafrost regions, 3D simulations on such a domain are very computational demanding.
+\item Figure 15: Perhaps the overall problem size is too small for the strong scaling study? It would be nice to understand where the time is spend/lost? Is it in Arcos or the overland flow solution? \\ \\ 
+Response: On smaller domains (such as 75 polygons) we should not expect a good scaling mainly due to the overhead surface system. Discussed in the Speedup study section; page 21, line 350.
+\end{itemize}
+
+
+\end{document}  
