@@ -97,7 +97,7 @@ Approximately 23\% of the land surface in the Northern Hemisphere is underlain b
 
 Those potential impacts and feedbacks in the terrestrial Arctic have motivated the development of increasingly sophisticated tools for simulating permafrost dynamics in a warming climate. Such simulations can help to better understand the consequences of soil warming and responses of tundra ecosystems to warming trends, and further expose the effects of permafrost degradation on surface and subsurface thermal hydrology. However, simulating permafrost dynamics in a complex and coupled surface/subsurface thermal hydrological environment is a challenging task, especially at larger spatiotemporal scales~\cite{painter2013modeling}.  A comprehensive review of the modeling efforts of the surface and subsurface can be found in~\cite{kurylyk2014climate}. Early research efforts focused on one-dimensional simulations for fundamental understanding of infiltration in cold climates; see, for example,~\cite{harlan1973analysis, guymon1974coupled, taylor1978model}. Similar one-dimensional approximations have been adopted as coarse-scale models in global land surface models \cite{takata2003development, nicolsky2007improved, lawrence2012simulation, koven2013analysis}.  Two-dimensional simulations with simplified physics (i.e. saturated conditions, subsurface only) have been used for understanding evolution of field-scale groundwater systems~\cite{mckenzie2007groundwater, bense2009evolution}, but do not represent key unsaturated zone processes that are needed to understand active layer dynamics and decomposition of soil organic matter.   It is worth pointing out that mathematical models with limited complexity, reduced dimensionality, and relatively coarse spatial resolutions provide some insight into permafrost dynamics but fail to represent important processes such as cryosuction, lateral surface and subsurface flows, and advective heat transfers. Simulations with more mechanistic representations of surface and vadose zone process in three-dimensions are essential to accurately capture the potential impacts of permafrost thawing on the surface and subsurface thermal hydrology and the resulting effects on the carbon cycle. 
 
-Two- and three-dimensional models with explicit physics-based representations of ice/liquid/gas partitioning in the vadose zone~\cite{painter2014constitutive} have only recently started to appear. Painter \cite{marsflo} developed the three-phase, two-component model MarsFlo which has been used in Mars \cite{grimm2009mars} and Earth permafrost studies \cite{frampton2011}.  Karra et al. \cite{karra2014three} simplified that subsurface freezing-soil thermal hydrology representation by ignoring gas advection and implemented that Richards-like approximation in the highly parallel PFLOTRAN \cite{pflotran-web-page} code. Kumar et al.~\cite{kumar2016modeling} used that implementation in three-dimensional microtopography-resolving thermal hydrology simulations of polygonal tundra. Those computer codes are all subsurface-only models; that is, they do not represent surface flows and surface energy balance. Painter et al. \cite{spainter2016integrated} recently introduced the Arctic Terrestrial Simulator, which uses a sophisticated multiphysics management framework \cite{coon2016managing} to couple the three-dimensional subsurface representation of \cite{karra2014three} with a two-dimensional non-isothermal surface flow model, surface energy balance with and without snow, and a simple snow distribution model. 
+Two- and three-dimensional models with explicit physics-based representations of ice/liquid/gas partitioning in the vadose zone have only recently started to appear~\cite{painter2014constitutive}. Painter \cite{marsflo} developed the three-phase, two-component model MarsFlo which has been used in Mars \cite{grimm2009mars} and Earth permafrost studies \cite{frampton2011}.  Karra et al. \cite{karra2014three} simplified that subsurface freezing-soil thermal hydrology representation by ignoring gas advection and implemented that Richards-like approximation in the highly parallel PFLOTRAN \cite{pflotran-web-page} code. Kumar et al.~\cite{kumar2016modeling} used that implementation in three-dimensional microtopography-resolving thermal hydrology simulations of polygonal tundra. Those computer codes are all subsurface-only models; that is, they do not represent surface flows and surface energy balance. Painter et al. \cite{spainter2016integrated} recently introduced the Arctic Terrestrial Simulator, which uses a sophisticated multiphysics management framework \cite{coon2016managing} to couple the three-dimensional subsurface representation of \cite{karra2014three} with a two-dimensional non-isothermal surface flow model, surface energy balance with and without snow, and a simple snow distribution model. 
 
 Despite the significant progress in developing integrated surface/subsurface permafrost thermal hydrology models, significant challenges remain in moving to climate-relevant spatiotemporal scales. One of the challenges is that the integrated system is numerically stiff because of the highly dynamic surface system~\cite{spainter2016integrated} and the ice-liquid phase transition~\cite{dall2011robust}, which often results in relatively small time steps to achieve convergence. Small time steps are not problematic in one-dimensional simulations because a well-designed simulation tool will recover the time step quickly after a convergence failure. However, a small time step becomes problematic in large three-dimensional runs because it becomes increasingly likely that, at any given time, at least one computational cell will be experiencing a phase change and thus a small time step. The other major challenge is tracking thaw-induced subsidence. Traditional hydrological simulators are mainly designed to conduct three-dimensional simulations, however, deformations in a three-dimensional simulation are not easy to track due to mesh tangling and can be computationally expensive; further, poor mesh quality may raise questions about the accuracy of the results. 
 
@@ -249,14 +249,14 @@ In Fig.~\ref{thaw-depth} we plot the mean annual thaw depth at five locations fo
 Not surprisingly, as the value of $\alpha$ increases the mean annual thaw depth deviates from the results of the 3D model to some extent, but we still see the results of the mixed-dimensional model agree well with the corresponding benchmark solution. The consistency of our numerical results with the fully coupled 3D simulations confirm the appropriateness of this approximated scheme. 
 
 
-\newtext{For demonstration purpose, the surface ponded depth and temperature during the snowmelt in 2012 are presented in Fig.~\ref{barrow-pd-temp} for the 468 polygon domain. Fully coupled 3D simulations at such a scale are computationally very expensive.}
+\newtext{Lastly, for demonstration purpose only, the surface ponded depth and temperature during the snowmelt in 2012 are presented in Fig.~\ref{barrow-pd-temp} for the 468 polygon domain. Fully coupled 3D simulations at such a scale are computationally very expensive.}
 
 
  \begin{figure}[!htpb]
 \centering
 \includegraphics[height = 7.5cm, width=6cm]{figures/comparison/regular/ss-sat/comp-sat-loc1-cycle0020.eps}
 \includegraphics[height = 7.5cm, width=6cm]{figures/comparison/regular/ss-sat/comp-sat-loc5-cycle0020.eps}
-\caption{Comparison of the subsurface water saturation at locations 1 and 5 during the summer for $\alpha = 1$.}
+\caption{Comparison of the subsurface liquid saturation at locations 1 and 5 during the summer. Results correspond to $\alpha = 1$.}
 \label{ss-sat-comp}
 \end{figure}
 
@@ -265,7 +265,7 @@ Not surprisingly, as the value of $\alpha$ increases the mean annual thaw depth 
 \centering
 \includegraphics[height = 7.5cm, width=6cm]{figures/comparison/regular/ss-temp/comp-temp-loc1-cycle0020.eps}
 \includegraphics[height = 7.5cm, width=6cm]{figures/comparison/regular/ss-temp/comp-temp-loc5-cycle0020.eps}
-\caption{Comparison of subsurface temperature at locations 1 and 5 during the summer for $\alpha = 1$.}
+\caption{Comparison of subsurface temperature at locations 1 and 5 during the summer. Results correspond to $\alpha = 1$.}
 \label{ss-temp-comp}
 \end{figure}
 
@@ -273,7 +273,7 @@ Not surprisingly, as the value of $\alpha$ increases the mean annual thaw depth 
 \centering
 \includegraphics[height = 7.cm, width=6.cm]{figures/comparison/regular/ponded-depth/comp-pd-location1.eps}
 \includegraphics[height = 7.cm, width=6.cm]{figures/comparison/regular/ponded-depth/comp-pd-location5.eps}
-\caption{An illustration of the surface ponded depths of the two schemes at locations 1 and 5 during the summer for $\alpha = 1$.}
+\caption{An illustration of the surface ponded depths of the two schemes at locations 1 and 5 during the summer. Results correspond to $\alpha = 1$.}
 \label{surf-pd-comp}
 \end{figure}
 
@@ -282,28 +282,16 @@ Not surprisingly, as the value of $\alpha$ increases the mean annual thaw depth 
 \includegraphics[height = 7.5cm, width=11.cm]{figures/comparison/regular/surf-temp/comp-temp-location1.eps} \\
 %\includegraphics[height = 5.9cm, width=11.cm]{figures/comparison/regular/surf-temp/comp-temp-location5.eps}
 %\includegraphics[height = 5.9cm, width=11.cm]{figures/comparison/regular/surf-temp/comp-temp-location1-5.eps}
-\caption{An illustration of the surface temperature of the two schemes at location 1 for the entire year. %The bottom plot highlights the difference between the temperatures at location 1 and 5, though they appear quite similar in the top two plots.
-}
+\caption{An illustration of the surface temperature of the two schemes at location 1 for the entire year. Results correspond to $\alpha = 1$.}
 \label{surf-temp-comp}
 \end{figure}
-
-%\begin{comment}
-%\begin{figure}[!htpb]
-%\centering
-%\includegraphics[height = 6.cm, width=10.cm]{figures/comparison/regular/error.eps}
-%\includegraphics[height = 6.cm, width=10.cm]{figures/comparison/dist/Elev-grad1.5m/error.eps}
-%\includegraphics[height = 6.cm, width=10.cm]{figures/comparison/dist/Elev-grad2.5m/error.eps}
-%\caption{The root mean square difference of the subsurface water saturation at the selected locations of the three studies.}
-%\label{error-plots}
-%\end{figure}
-%\end{comment}
 
 \begin{figure}[!htpb]
 \centering
 \includegraphics[height = 6.cm, width=10.cm]{figures/comparison/annual-thaw-depth/annual_depth-1.eps}
 \includegraphics[height = 6.cm, width=10.cm]{figures/comparison/annual-thaw-depth/annual_depth-3.eps}
 \includegraphics[height = 6.cm, width=10.cm]{figures/comparison/annual-thaw-depth/annual_depth-5.eps}
-\caption{A comparison of the annual thaw depth at the selected locations of the three studies.}
+\caption{A comparison of the annual thaw depth at the selected locations of the three studies. Results correspond to $\alpha = 1$.}
 \label{thaw-depth}
 \end{figure}
 
@@ -345,7 +333,7 @@ As expected, the scaling is better for a larger domain. Scaling is close to line
 \centering
 %\includegraphics[height = 6.5cm, width=10cm]{figures/speedup-lcs-lobster.eps}
 \includegraphics[height = 6.5cm, width=10cm]{figures/speedup-lcs-barrow.eps}
-\caption{An illustration of the speedup study of a simulation with 468 polygons barrow watershed.}
+\caption{An illustration of the speedup study of a simulation with 468 polygons watershed.}
 \label{lcs-speed}
 \end{figure}
 
