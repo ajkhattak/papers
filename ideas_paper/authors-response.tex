@@ -35,33 +35,49 @@ Ref: COMG-D-16-00227
 \bigskip
 \bigskip
 
+We are grateful for the constructive review and have made revisions to the manuscript as appropriate to accommodate the suggestions. We are confident the revised manuscript is improved and suitable for Computational Geosciences. We include a version of the manuscript with changes tracked. Specific changes are summarized as follows:
 
 
 \begin{itemize}
 
-\item 228: PK trees are not clear. Is Acros a coupling infrastructure? Some more details would be helpful. \\ \\
-Response: Relevant information has been added for clarification.
-\item 234: Perhaps I missed it, what is MPC? \\ \\ 
-Response: Multiprocess Coordinator manages the coupling among process kernels. Relevant information has been added.
-\item 240: How is the information/simulation data passed between process kernels? \\ \\
-Response:  Ethan??
-\item 255: Is that limiting the representation of heterogeneity? \\ \\
-Response: Scott??
-\item 290: Provide time step information. How sensitive are the results to the time step size? \\ \\
-Response:  Simulations have been performed with several maximum time-steps (less than 1 day) and no significant changes have been observed.
-\item 309: Is there a way to perform a dimensional analysis and thus generalize the results perhaps? \\ \\
-Response: Scott??
-\item Figure 9: Look like it has been stretched! \\ \\
-Response: Corrected!
-\item Figure 11: Wouldn't the thaw depth error accumulate from season to season? \\ \\
-Response: The annual thaw depth is mainly determined by the variations in temperature during the summer and in our experience the previous year history has less effect on the annual thaw depth. 
-\item Figure 13: Is it possible to juxtapose maps of fully 3D simulations to interrogate differences in the patterns? \\ \\
-Response: Given the complexity of the permafrost regions, 3D simulations on such a domain are very computational demanding.
-\item Figure 15: Perhaps the overall problem size is too small for the strong scaling study? It would be nice to understand where the time is spend/lost? Is it in Arcos or the overland flow solution? \\ \\ 
-Response: On smaller domains (such as 75 polygons) we should not expect a good scaling mainly due to the overhead surface system. Discussed in the Speedup study section; page 21, line 350.
+\item general: The authors need to state explicitly that the model is 1D isolated subsurface columns only, similar to classical land surface models (some references should be added as well.) At the microtopography level, the approach is no useful, because thaw processes may have lateral impacts in my opion. In addition the authors must state that the operator split removes the non-linearity of the exchange and in addition is not strictly mass conservative (is that the meaning of linesm 196 to 199?). This of course is not completely satisfying yet at the large scale operationally justifiable, perhaps. \\ \\
+Response: The 1-D columns are actually integrated surface/subsurface systems (i.e. we represent surface processes on each column), a point that was not clear in the text. We undertook extensive revisions to the introduction and Section 4 clarify this important point. Those revisions should also clarify that our scheme is mass/energy conservative. We are essentially splitting lateral surface fluxes from vertical fluxes, so there is splitting error but the scheme does not introduce conservation error. That the columns are mutually independent was explicitly stated in the abstract, introduction, and Section 4 in the original manuscript.  Nevertheless, the revisions should make this even more explicit. 
 
-\item In the conclusions it would be nice to learn whether the modeling system affords simulations over very large regions, let's say subcontinental, which would make it relevant also for the climate community. \\ \\
-We may want to add something in the conclusion....
+\item 228: PK trees are not clear. Is Acros a coupling infrastructure? Some more details would be helpful. \\ \\
+Response: Arcos is described in Section 2. We also cite our 2016 journal article, which provides details. 
+We have updated the text where the PK tree is introduced to point the reader back to Section 2 and to our previous paper. We also added (redundant) definitions for PKs and MPCs and added some more detail to the Figure 5 caption for clarification. 
+
+\item 234: Perhaps I missed it, what is MPC? \\ \\ 
+Response: Multiprocess Coordinator manages the coupling among process kernels, as described in Section 2. A (redundant) definition was added in Section 4.3 and in the Figure 5 caption. 
+
+\item 240: How is the information/simulation data passed between process kernels? \\ \\
+Response:  Details on Arcos can be found in our previous journal article (Coon et al., 2016) and are outside the scope of the current paper. 
+
+\item 255: Is that limiting the representation of heterogeneity? \\ \\
+Response: We updated the text to clarify that subsurface structure is honored. 
+
+\item 290: Provide time step information. How sensitive are the results to the time step size? \\ \\
+Response:  This is a good question. These stiff systems require an adaptive time step. Here we allow all the PKs to vote on their preferred time step, and take the minimum value. Time step control within each PK is based on a target number of iterations combined with an upper limit on the time step. We think there is some opportunity to optimize the time step control, especially with the sub cycling option turned on, but we will leave that to future work.  We have performed the simulations with several maximum time-steps (less than 1 day) and no significant changes have been observed.
+We added the following in the revised manuscript: "As with any splitting scheme, accuracy and numerical performance will depend on the time step size. Results shown here were obtained with an adaptive time step determined by the minimum preferred time step for surface and subsurface PKs." 
+
+\item 309: Is there a way to perform a dimensional analysis and thus generalize the results perhaps? \\ \\
+Response: We're not sure we understand the question. We do provide a dimensionless slope for these landscapes
+
+\item Figure 9: Look like it has been stretched! \\ \\
+Response: Corrected
+
+\item Figure 11: Wouldn't the thaw depth error accumulate from season to season? \\ \\
+Response: We added this to the manuscript: "The annual thaw depth is mainly determined by heat input to the subsurface during the summer season with a very limited memory effect from the previous year. Thus, we do not expect errors in the annual thaw depth to accumulate year to year." 
+
+\item Figure 13: Is it possible to juxtapose maps of fully 3D simulations to interrogate differences in the patterns? \\ \\
+Response: We were not able to do the fully 3D simulations on such a domain because of computational demands. 
+
+\item Figure 15: Perhaps the overall problem size is too small for the strong scaling study? It would be nice to understand where the time is spend/lost? Is it in Arcos or the overland flow solution? \\ \\ 
+Response: We agree that on smaller domains (such as 75 polygons) we should not expect a good scaling mainly due to communication overhead on the surface system. We removed the scaling study for the smaller domain and expanded the discussed in the Speedup study section; page 21, line 350. We understand the scaling behavior, but also agree it would be nice to understand where the time is spent more generally.  But, that is outside the scope of the current paper. Arcos itself is relatively lightweight, but there may be other opportunities to optimize the Amanzi infrastructure. Those questions are left to a future study. 
+
+\item general:  In the conclusions it would be nice to learn whether the modeling system affords simulations over very large regions, let's say subcontinental, which would make it relevant also for the climate community. \\ \\
+We may want to add something in the conclusion....\\ \\
+Response: Good suggestion. We added this discussion in the conclusion. 
 \end{itemize}
 
 
